@@ -360,7 +360,7 @@ if (contactAction && emailPlaceholder && contactNote && CONTACT_EMAIL.trim()) {
     const emailButton = document.createElement("a");
     emailButton.className = "button button-light contact-email";
     emailButton.href = `mailto:${address}`;
-    emailButton.textContent = "Get in touch";
+    emailButton.textContent = "GET IN TOUCH";
     const arrow = document.createElement("span");
     arrow.setAttribute("aria-hidden", "true");
     arrow.textContent = "↗";
