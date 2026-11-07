@@ -7,6 +7,25 @@ const CONTACT_TELEGRAM = "";
 
 document.documentElement.classList.add("has-js");
 
+const siteVideo = document.querySelector(".site-video");
+if (siteVideo instanceof HTMLVideoElement) {
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const updateSiteVideo = () => {
+    if (reducedMotion.matches) {
+      siteVideo.pause();
+      return;
+    }
+
+    if (!siteVideo.src && siteVideo.dataset.src) siteVideo.src = siteVideo.dataset.src;
+    siteVideo.play().catch(() => {
+      siteVideo.pause();
+    });
+  };
+
+  updateSiteVideo();
+  reducedMotion.addEventListener("change", updateSiteVideo);
+}
+
 const displayName = PROFESSIONAL_NAME.trim() || BRAND_NAME;
 document.querySelectorAll("[data-brand-name]").forEach((element) => {
   element.textContent = displayName;
