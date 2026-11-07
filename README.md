@@ -8,7 +8,7 @@ A responsive personal portfolio for an early-career independent web developer. T
 - CSS3, including responsive layouts and reduced-motion support
 - Vanilla JavaScript
 
-The Selected Work cards use the supplied screenshots in `assets/urban-cut-preview.png` and `assets/northline-preview.png`; CSS-built previews remain as graceful fallbacks if an image cannot load. Google Fonts are loaded from Google Fonts when a network connection is available; local system fallbacks are provided.
+The Selected Work cards use the supplied screenshots in `public/assets/urban-cut-preview.png` and `public/assets/northline-preview.png`; CSS-built previews remain as graceful fallbacks if an image cannot load. Google Fonts are loaded from Google Fonts when a network connection is available; local system fallbacks are provided.
 
 ## Features
 
@@ -24,18 +24,28 @@ The Selected Work cards use the supplied screenshots in `assets/urban-cut-previe
 
 ## Run locally
 
-No build step or package installation is required. Open `index.html` in a browser, or serve this directory with any static file server. For example, with Python installed:
+No build step or package installation is required. Open `public/index.html` in a browser, or serve the `public` directory with any static file server. For example, with Python installed:
 
 ```bash
-python -m http.server 8000
+python -m http.server 8000 --directory public
 ```
 
 Then visit `http://localhost:8000`.
 
+## Deploy to Cloudflare Workers Static Assets
+
+The root `wrangler.jsonc` configures Wrangler to publish the static files in `public`. From the project root, run:
+
+```bash
+npx wrangler deploy
+```
+
+Wrangler may prompt you to authenticate with Cloudflare. This command deploys the site; it is not run as part of local development.
+
 ## Personalization before publishing
 
-1. Set `PROFESSIONAL_NAME` and `BRAND_MARK` near the top of `script.js`. The defaults preserve the generic portfolio name and `V.` placeholder. `BRAND_NAME` is the fallback when no professional name is set.
-2. Verify or replace `CONTACT_EMAIL` near the top of `script.js` with an email address you control. The email link is not shown when the setting is blank or invalid.
+1. Set `PROFESSIONAL_NAME` and `BRAND_MARK` near the top of `public/script.js`. The defaults preserve the generic portfolio name and `V.` placeholder. `BRAND_NAME` is the fallback when no professional name is set.
+2. Verify or replace `CONTACT_EMAIL` near the top of `public/script.js` with an email address you control. The email link is not shown when the setting is blank or invalid.
 3. Optionally set `CONTACT_TELEGRAM` to your real `https://t.me/...` or `https://telegram.me/...` link. No Telegram link is shown by default.
 4. Optionally add your own portrait in the About section.
 5. Review the project descriptions and live links before publishing.
@@ -50,11 +60,13 @@ AI-assisted development is described as part of the developer's workflow, alongs
 
 ```text
 developer-portfolio/
-├── index.html
-├── style.css
-├── script.js
 ├── README.md
-└── assets/
-    ├── urban-cut-preview.png
-    └── northline-preview.png
+├── wrangler.jsonc
+└── public/
+    ├── index.html
+    ├── style.css
+    ├── script.js
+    └── assets/
+        ├── urban-cut-preview.png
+        └── northline-preview.png
 ```
