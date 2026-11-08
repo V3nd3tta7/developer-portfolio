@@ -15,6 +15,7 @@ The Selected Work cards use the supplied screenshots in `public/assets/urban-cut
 - Responsive navigation with an accessible mobile menu
 - Two real, live independent concept projects with safe new-tab links and lazy-loaded screenshots
 - Responsive project, services, about, and contact sections
+- Developer introduction terminal with a typing animation that respects `prefers-reduced-motion`
 - Scroll reveal animations that respect `prefers-reduced-motion`
 - Visible content if JavaScript is unavailable
 - Email contact link generated from `CONTACT_EMAIL`, with optional Telegram and WhatsApp links shown only when valid contact details are configured

@@ -11,6 +11,23 @@ document.documentElement.classList.add("has-js");
 const siteVideo = document.querySelector(".site-video");
 if (siteVideo instanceof HTMLVideoElement) {
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let playbackErrorReported = false;
+  const reportPlaybackError = (reason) => {
+    if (playbackErrorReported) return;
+    playbackErrorReported = true;
+    console.error("Background video playback failed; the static background remains active.", {
+      source: siteVideo.currentSrc || siteVideo.dataset.src,
+      reason,
+      mediaError: siteVideo.error
+        ? { code: siteVideo.error.code, message: siteVideo.error.message || "Unknown media error." }
+        : null,
+    });
+  };
+
+  siteVideo.addEventListener("error", () => {
+    reportPlaybackError("The browser could not load or decode the video.");
+  }, { once: true });
+
   const updateSiteVideo = () => {
     if (reducedMotion.matches) {
       siteVideo.pause();
@@ -18,7 +35,8 @@ if (siteVideo instanceof HTMLVideoElement) {
     }
 
     if (!siteVideo.src && siteVideo.dataset.src) siteVideo.src = siteVideo.dataset.src;
-    siteVideo.play().catch(() => {
+    siteVideo.play().catch((error) => {
+      if (!reducedMotion.matches) reportPlaybackError(error);
       siteVideo.pause();
     });
   };
@@ -37,6 +55,94 @@ document.querySelectorAll("[data-brand-mark]").forEach((element) => {
 document.title = `${displayName} — Modern websites, thoughtfully built.`;
 const openGraphTitle = document.querySelector('meta[property="og:title"]');
 if (openGraphTitle) openGraphTitle.setAttribute("content", document.title);
+
+const terminal = document.querySelector("[data-terminal]");
+const terminalLines = terminal?.querySelector("[data-terminal-lines]");
+if (terminal && terminalLines) {
+  const terminalContent = [
+    { type: "command", text: "> whoami" },
+    { type: "response", text: "> Independent Web Developer" },
+    { type: "command", text: "> mission" },
+    { type: "response", text: "> Turning ideas into modern websites." },
+    { type: "command", text: "> services --list" },
+    { type: "service", text: "> Landing Pages" },
+    { type: "service", text: "> Business Websites" },
+    { type: "service", text: "> Website Redesign" },
+    { type: "command", text: "> tech_stack" },
+    { type: "response", text: "> HTML · CSS · JavaScript · AI" },
+    { type: "command", text: "> portfolio --status" },
+    { type: "response", text: "> 2 Live Concept Projects ✓" },
+    { type: "command", text: "> availability" },
+    { type: "availability", text: "> Open for new projects" },
+  ];
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    terminalContent.forEach((line) => {
+      const element = document.createElement("span");
+      element.className = `terminal-line terminal-${line.type}`;
+      element.textContent = line.text;
+      terminalLines.append(element);
+    });
+  } else {
+    let active = true;
+    let timeoutId;
+    let lineIndex = 0;
+    let characterIndex = 0;
+    let currentLine;
+    let pauseUntil = 0;
+
+    const typeNextCharacter = () => {
+      if (!active) return;
+      if (pauseUntil > Date.now()) {
+        timeoutId = window.setTimeout(typeNextCharacter, pauseUntil - Date.now());
+        return;
+      }
+
+      if (lineIndex >= terminalContent.length) {
+        return;
+      }
+
+      const line = terminalContent[lineIndex];
+      if (!currentLine) {
+        currentLine = document.createElement("span");
+        currentLine.className = `terminal-line terminal-${line.type}`;
+        terminalLines.append(currentLine);
+      }
+
+      currentLine.textContent += line.text[characterIndex];
+      characterIndex += 1;
+      terminal.scrollTop = terminal.scrollHeight;
+
+      if (characterIndex >= line.text.length) {
+        currentLine = null;
+        lineIndex += 1;
+        characterIndex = 0;
+        pauseUntil = Date.now() + (line.type === "command" ? 280 : 120);
+      }
+
+      timeoutId = window.setTimeout(typeNextCharacter, line.type === "command" ? 48 : 24);
+    };
+
+    const showAllLines = () => {
+      active = false;
+      window.clearTimeout(timeoutId);
+      terminalLines.replaceChildren();
+      terminalContent.forEach((line) => {
+        const element = document.createElement("span");
+        element.className = `terminal-line terminal-${line.type}`;
+        element.textContent = line.text;
+        terminalLines.append(element);
+      });
+      terminal.scrollTop = 0;
+    };
+
+    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    motionPreference.addEventListener("change", (event) => {
+      if (event.matches) showAllLines();
+    });
+    timeoutId = window.setTimeout(typeNextCharacter, 450);
+  }
+}
 
 const createProjectCarousel = (carousel) => {
   const projectName = carousel.dataset.projectName;
