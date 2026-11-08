@@ -186,13 +186,17 @@ h1, h2, h3, p { margin-top: 0; }
 .contact-bottom { display: flex; align-items: end; justify-content: space-between; gap: 30px; margin-top: 35px; }
 .contact-bottom > p { max-width: 440px; margin: 0; color: var(--secondary); font-size: 19px; line-height: 1.7; }
 .contact-action { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.contact-buttons { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .button-light { min-height: 54px; border: 1px solid var(--brick); background: var(--brick); color: var(--paper); }
+.contact-channel-button { min-height: 54px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 9px 14px; border: 1px solid var(--border); background: rgba(58, 36, 27, .56); color: var(--paper); font: 400 12px/1.5 var(--pixel-display); text-decoration: none; transition: background .2s ease, border-color .2s ease, color .2s ease; }
+.contact-channel-button:hover { border-color: var(--brick-hover); background: var(--surface-raised); color: var(--sand); }
+.contact-channel-button:focus-visible { outline: 3px solid var(--sand); outline-offset: 3px; }
+.contact-channel-button.button-light { border-color: var(--brick); background: var(--brick); color: var(--paper); }
+.contact-channel-button.button-light:hover { border-color: var(--brick-hover-surface); background: var(--brick-hover-surface); }
 .contact-email-placeholder { color: var(--secondary); font-size: 17px; line-height: 1.65; }
 .contact-note { max-width: 100%; margin: 0; color: var(--secondary); font: 15px/1.6 var(--pixel-text); overflow-wrap: anywhere; }
 .optional-contact-links { display: flex; flex-wrap: wrap; gap: 12px; }
 .optional-contact-links:empty { display: none; }
-.contact-telegram { padding-bottom: 4px; border-bottom: 1px solid var(--sand); color: var(--sand); font-size: 16px; font-weight: 600; }
-.contact-telegram:hover { color: var(--brick-hover); border-color: var(--brick-hover); }
 .contact-github { display: inline-flex; gap: 14px; margin-top: 54px; padding-bottom: 8px; border-bottom: 1px solid var(--sand); color: var(--paper); font-size: 16px; font-weight: 600; }
 .contact-github span { color: var(--sand); }
 .contact-github:hover { color: var(--sand); border-color: var(--brick-hover); }
@@ -227,6 +231,7 @@ h1, h2, h3, p { margin-top: 0; }
   .hero::before { right: -16%; }
   .hero::after { right: -7%; }
   .section-pad { padding: 88px 0; }
+  .contact-bottom { align-items: flex-start; flex-direction: column; gap: 22px; margin-top: 24px; }
   .project-card, .project-card-reverse { gap: 34px; }
   .project-title-line h3 { font-size: clamp(18px, 2.4vw, 24px); }
   .footer-main { gap: 30px; }
@@ -298,10 +303,11 @@ h1, h2, h3, p { margin-top: 0; }
   .tool-list li { font-size: 15px; }
   .contact .eyebrow { font-size: 15px; }
   .contact h2 { font-size: clamp(30px, 8vw, 46px); line-height: 1.5; }
-  .contact-bottom { align-items: flex-start; flex-direction: column; gap: 22px; margin-top: 24px; }
   .contact-bottom > p { font-size: 18px; }
-  .contact-email-placeholder, .contact-telegram { font-size: 16px; }
+  .contact-email-placeholder { font-size: 16px; }
   .contact-note { font-size: 14px; }
+  .contact-buttons { gap: 8px; }
+  .contact-channel-button { min-height: 48px; padding-inline: 10px; font-size: 11px; }
   .contact-github { margin-top: 39px; font-size: 16px; }
   .footer-main { grid-template-columns: 1fr auto; gap: 22px; }
   .footer-brand { grid-column: 1 / -1; }

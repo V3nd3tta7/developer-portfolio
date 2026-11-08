@@ -17,7 +17,7 @@ The Selected Work cards use the supplied screenshots in `public/assets/urban-cut
 - Responsive project, services, about, and contact sections
 - Scroll reveal animations that respect `prefers-reduced-motion`
 - Visible content if JavaScript is unavailable
-- Email contact link generated from `CONTACT_EMAIL`, with an optional Telegram link generated only from a configured Telegram URL
+- Email contact link generated from `CONTACT_EMAIL`, with optional Telegram and WhatsApp links shown only when valid contact details are configured
 - Centralized professional name and brand settings, with honest early-career positioning
 - Automatically updated footer year
 - Keyboard skip link, focus styles, semantic landmarks, and basic Open Graph metadata
@@ -45,10 +45,11 @@ Wrangler may prompt you to authenticate with Cloudflare. This command deploys th
 ## Personalization before publishing
 
 1. Set `PROFESSIONAL_NAME` and `BRAND_MARK` near the top of `public/script.js`. The defaults preserve the generic portfolio name and `V.` placeholder. `BRAND_NAME` is the fallback when no professional name is set.
-2. Verify or replace `CONTACT_EMAIL` near the top of `public/script.js` with an email address you control. The email link is not shown when the setting is blank or invalid.
-3. Optionally set `CONTACT_TELEGRAM` to your real `https://t.me/...` or `https://telegram.me/...` link. No Telegram link is shown by default.
-4. Optionally add your own portrait in the About section.
-5. Review the project descriptions and live links before publishing.
+2. Set `CONTACT_EMAIL` near the top of `public/script.js` to the address you want displayed and linked from the email button.
+3. Optionally set `CONTACT_TELEGRAM` to your Telegram username (without the URL; an optional leading `@` is accepted). No Telegram button is shown by default.
+4. Optionally set `CONTACT_WHATSAPP` to your international phone number using digits only, including the country code. No WhatsApp button is shown by default.
+5. Optionally add your own portrait in the About section.
+6. Review the project descriptions and live links before publishing.
 
 URBAN CUT and NORTHLINE PROPERTY are live, independent concept projects, not paid client work. Their screenshots are the genuine previews supplied for this portfolio, not stock images.
 

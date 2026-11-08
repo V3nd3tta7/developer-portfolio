@@ -2,8 +2,9 @@
 const PROFESSIONAL_NAME = "";
 const BRAND_NAME = "Independent Web Developer";
 const BRAND_MARK = "V.";
-const CONTACT_EMAIL = "seregaboldeskiy2525@gmail.com";
-const CONTACT_TELEGRAM = "";
+const CONTACT_EMAIL = "serhiy.boldetskiy.it@gmail.com";
+const CONTACT_TELEGRAM = "https://t.me/serhiy_boldetskiy";
+const CONTACT_WHATSAPP = "380937687795";
 
 document.documentElement.classList.add("has-js");
 
@@ -358,14 +359,16 @@ if (contactAction && emailPlaceholder && contactNote && CONTACT_EMAIL.trim()) {
     emailPlaceholder.textContent = "Email contact is not available yet.";
   } else {
     const emailButton = document.createElement("a");
-    emailButton.className = "button button-light contact-email";
+    emailButton.className = "button button-light contact-email contact-channel-button";
     emailButton.href = `mailto:${address}`;
-    emailButton.textContent = "GET IN TOUCH";
+    emailButton.setAttribute("aria-label", "Send an email");
+    emailButton.textContent = "EMAIL";
     const arrow = document.createElement("span");
     arrow.setAttribute("aria-hidden", "true");
     arrow.textContent = "↗";
     emailButton.append(" ", arrow);
     emailPlaceholder.replaceWith(emailButton);
+    contactAction.querySelector(".contact-buttons").prepend(emailButton);
     contactNote.textContent = address;
     contactNote.hidden = false;
   }
@@ -374,21 +377,44 @@ if (contactAction && emailPlaceholder && contactNote && CONTACT_EMAIL.trim()) {
 if (optionalContactLinks && CONTACT_TELEGRAM.trim()) {
   let telegramUrl;
   try {
-    telegramUrl = new URL(CONTACT_TELEGRAM.trim());
+    const configuredTelegram = CONTACT_TELEGRAM.trim();
+    telegramUrl = new URL(configuredTelegram.includes("://")
+      ? configuredTelegram
+      : `https://t.me/${configuredTelegram.replace(/^@/, "")}`);
   } catch (error) {
-    console.error("CONTACT_TELEGRAM must be a valid HTTPS Telegram link.", error);
+    console.error("CONTACT_TELEGRAM must be a valid Telegram username or https://t.me/ URL.", error);
   }
 
-  if (telegramUrl && telegramUrl.protocol === "https:" && ["t.me", "telegram.me"].includes(telegramUrl.hostname)) {
+  const username = telegramUrl?.pathname.slice(1);
+  if (telegramUrl?.protocol === "https:" && telegramUrl.hostname === "t.me"
+    && /^[A-Za-z][A-Za-z0-9_]{4,31}$/.test(username)
+    && !telegramUrl.search && !telegramUrl.hash) {
     const telegramLink = document.createElement("a");
-    telegramLink.className = "contact-telegram";
-    telegramLink.href = telegramUrl.href;
+    telegramLink.className = "contact-telegram contact-channel-button";
+    telegramLink.href = `https://t.me/${username}`;
     telegramLink.target = "_blank";
     telegramLink.rel = "noopener noreferrer";
-    telegramLink.textContent = "Message me on Telegram ↗";
+    telegramLink.setAttribute("aria-label", "Open Telegram chat");
+    telegramLink.textContent = "TELEGRAM";
     optionalContactLinks.append(telegramLink);
   } else if (telegramUrl) {
-    console.error("CONTACT_TELEGRAM must use an https://t.me/ or https://telegram.me/ address.");
+    console.error("CONTACT_TELEGRAM must be a valid https://t.me/username URL.");
+  }
+}
+
+if (optionalContactLinks && CONTACT_WHATSAPP.trim()) {
+  const number = CONTACT_WHATSAPP.trim();
+  if (/^\d{7,15}$/.test(number)) {
+    const whatsappLink = document.createElement("a");
+    whatsappLink.className = "contact-whatsapp contact-channel-button";
+    whatsappLink.href = `https://wa.me/${number}`;
+    whatsappLink.target = "_blank";
+    whatsappLink.rel = "noopener noreferrer";
+    whatsappLink.setAttribute("aria-label", "Open WhatsApp chat");
+    whatsappLink.textContent = "WHATSAPP";
+    optionalContactLinks.append(whatsappLink);
+  } else {
+    console.error("CONTACT_WHATSAPP must contain 7 to 15 international-format digits, without a plus sign or separators.");
   }
 }
 
