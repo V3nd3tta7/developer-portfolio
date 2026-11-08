@@ -149,15 +149,8 @@ const createProjectCarousel = (carousel) => {
   const projectUrl = carousel.dataset.projectUrl;
   const dataElement = carousel.querySelector(".carousel-data");
   const initialSlide = carousel.querySelector(".carousel-slide");
-  const controls = carousel.querySelector(".carousel-controls");
-  const previousButton = carousel.querySelector("[data-carousel-previous]");
-  const nextButton = carousel.querySelector("[data-carousel-next]");
-  const toggleButton = carousel.querySelector("[data-carousel-toggle]");
-  const countElement = carousel.querySelector("[data-carousel-count]");
-  const dotsElement = carousel.querySelector("[data-carousel-dots]");
 
-  if (!projectName || !projectUrl || !dataElement || !initialSlide || !controls
-    || !previousButton || !nextButton || !toggleButton || !countElement || !dotsElement) {
+  if (!projectName || !projectUrl || !dataElement || !initialSlide) {
     console.error("Project carousel markup is incomplete.", carousel);
     return;
   }
@@ -183,30 +176,11 @@ const createProjectCarousel = (carousel) => {
   const preloaded = new Map();
   let currentIndex = 0;
   let transitionId = 0;
-  let intervalId;
-  let manuallyPaused = false;
-  let pointerInside = false;
-  let focusedInside = false;
+  let timerId;
 
   slides[0] = initialSlide;
   initialSlide.dataset.slideIndex = "0";
   initialSlide.setAttribute("aria-label", `Open the ${projectName} live website`);
-
-  const updateControls = () => {
-    countElement.textContent = `${String(currentIndex + 1).padStart(2, "0")} / ${String(slideData.length).padStart(2, "0")}`;
-    dotsElement.querySelectorAll(".carousel-dot").forEach((dot, index) => {
-      dot.setAttribute("aria-current", String(index === currentIndex));
-      dot.disabled = !available[index];
-    });
-
-    const paused = manuallyPaused || reducedMotion.matches;
-    toggleButton.textContent = paused ? "▶" : "Ⅱ";
-    toggleButton.setAttribute("aria-label", reducedMotion.matches
-      ? "Automatic slideshow disabled by reduced motion preference"
-      : `${manuallyPaused ? "Play" : "Pause"} automatic slideshow`);
-    toggleButton.setAttribute("aria-pressed", String(manuallyPaused));
-    toggleButton.disabled = reducedMotion.matches;
-  };
 
   const preloadSlide = (index) => {
     if (!available[index]) return Promise.reject(new Error("Slide is unavailable."));
@@ -254,10 +228,10 @@ const createProjectCarousel = (carousel) => {
     return link;
   };
 
-  const nextAvailableIndex = (startIndex, direction) => {
+  const nextAvailableIndex = (startIndex) => {
     for (let offset = 1; offset <= slideData.length; offset += 1) {
-      const index = (startIndex + direction * offset + slideData.length * offset) % slideData.length;
-      if (available[index]) return index;
+      const index = (startIndex + offset) % slideData.length;
+      if (index !== startIndex && available[index]) return index;
     }
     return -1;
   };
@@ -268,138 +242,86 @@ const createProjectCarousel = (carousel) => {
     const frame = slides[index];
     if (frame) frame.remove();
     slides[index] = null;
-    updateControls();
 
     if (!available.some(Boolean)) return;
     if (index === currentIndex) {
-      const fallbackIndex = nextAvailableIndex(index, 1);
-      if (fallbackIndex !== -1) showSlide(fallbackIndex, false);
+      const fallbackIndex = nextAvailableIndex(index);
+      if (fallbackIndex !== -1) showSlide(fallbackIndex);
     }
   };
 
-  const showSlide = async (index, resetTimer = true) => {
-    if (index === currentIndex || !available[index]) {
-      if (resetTimer) syncTimer();
-      return;
-    }
-
+  const showSlide = async (index) => {
+    if (index === currentIndex || !available[index] || reducedMotion.matches || document.hidden) return;
     const requestId = ++transitionId;
     try {
       await preloadSlide(index);
     } catch (error) {
       markUnavailable(index, error);
-      if (resetTimer) syncTimer();
       return;
     }
 
-    if (requestId !== transitionId || !available[index]) return;
+    if (requestId !== transitionId || !available[index] || reducedMotion.matches || document.hidden) return;
 
     const nextFrame = getSlideElement(index);
-    const image = nextFrame.querySelector("img");
-    if (image.complete && image.naturalWidth === 0) {
-      markUnavailable(index, new Error(`Unable to decode ${slideData[index].src}`));
-      return;
-    }
-
     const previousFrame = slides[currentIndex];
     carousel.append(nextFrame);
     nextFrame.classList.remove("is-exiting");
     nextFrame.classList.remove("is-active");
-    window.requestAnimationFrame(() => {
-      if (requestId !== transitionId) return;
-      nextFrame.classList.add("is-active");
-      if (previousFrame && previousFrame !== nextFrame) {
-        previousFrame.classList.remove("is-active");
-        previousFrame.classList.add("is-exiting");
-        window.setTimeout(() => {
-          if (previousFrame !== slides[currentIndex] && previousFrame !== slides[index]) {
-            previousFrame.remove();
-          }
-        }, reducedMotion.matches ? 0 : 550);
-      }
-    });
+    void nextFrame.offsetWidth;
+    nextFrame.classList.add("is-active");
+    if (previousFrame) {
+      previousFrame.classList.remove("is-active");
+      previousFrame.classList.add("is-exiting");
+      previousFrame.addEventListener("transitionend", (event) => {
+        if (event.propertyName === "opacity" && previousFrame !== slides[currentIndex]) {
+          previousFrame.remove();
+        }
+      }, { once: true });
+    }
 
     currentIndex = index;
-    updateControls();
-    if (resetTimer) syncTimer();
-    const nextIndex = nextAvailableIndex(currentIndex, 1);
-    if (nextIndex !== -1) preloadSlide(nextIndex).catch((error) => markUnavailable(nextIndex, error));
-  };
-
-  const syncTimer = () => {
-    if (intervalId !== undefined) {
-      window.clearInterval(intervalId);
-      intervalId = undefined;
-    }
-
-    if (!manuallyPaused && !pointerInside && !focusedInside
-      && !document.hidden && !reducedMotion.matches) {
-      intervalId = window.setInterval(() => {
-        const nextIndex = nextAvailableIndex(currentIndex, 1);
-        if (nextIndex !== -1) showSlide(nextIndex, false);
-      }, 4000);
+    const nextIndex = nextAvailableIndex(currentIndex);
+    if (nextIndex !== -1) {
+      preloadSlide(nextIndex).catch((error) => markUnavailable(nextIndex, error));
     }
   };
 
-  const createDot = (index) => {
-    const dot = document.createElement("button");
-    dot.className = "carousel-dot";
-    dot.type = "button";
-    dot.setAttribute("aria-label", `Show ${projectName} screenshot ${String(index + 1).padStart(2, "0")} of ${String(slideData.length).padStart(2, "0")}`);
-    dot.setAttribute("aria-current", String(index === currentIndex));
-    dot.disabled = !available[index];
-    dot.addEventListener("click", () => showSlide(index));
-    return dot;
+  const stopTimer = () => {
+    if (timerId !== undefined) {
+      window.clearTimeout(timerId);
+      timerId = undefined;
+    }
   };
 
-  for (let index = 0; index < slideData.length; index += 1) {
-    dotsElement.append(createDot(index));
-  }
+  const scheduleNextSlide = () => {
+    stopTimer();
+    if (document.hidden || reducedMotion.matches || !available.some(Boolean)) return;
+    timerId = window.setTimeout(async () => {
+      timerId = undefined;
+      const nextIndex = nextAvailableIndex(currentIndex);
+      if (nextIndex !== -1) await showSlide(nextIndex);
+      scheduleNextSlide();
+    }, 4000);
+  };
 
-  previousButton.addEventListener("click", () => {
-    const previousIndex = nextAvailableIndex(currentIndex, -1);
-    if (previousIndex !== -1) showSlide(previousIndex);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopTimer();
+    else scheduleNextSlide();
   });
-  nextButton.addEventListener("click", () => {
-    const nextIndex = nextAvailableIndex(currentIndex, 1);
-    if (nextIndex !== -1) showSlide(nextIndex);
-  });
-  toggleButton.addEventListener("click", () => {
-    manuallyPaused = !manuallyPaused;
-    updateControls();
-    syncTimer();
-  });
-
-  carousel.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-      event.preventDefault();
-      const direction = event.key === "ArrowRight" ? 1 : -1;
-      const targetIndex = nextAvailableIndex(currentIndex, direction);
-      if (targetIndex !== -1) showSlide(targetIndex);
+  reducedMotion.addEventListener("change", (event) => {
+    stopTimer();
+    transitionId += 1;
+    if (event.matches) {
+      slides.forEach((frame, index) => {
+        if (index !== 0 && frame) frame.remove();
+        if (index !== 0) slides[index] = null;
+      });
+      initialSlide.classList.remove("is-exiting");
+      initialSlide.classList.add("is-active");
+      currentIndex = 0;
+    } else {
+      scheduleNextSlide();
     }
-  });
-  carousel.addEventListener("pointerenter", () => {
-    pointerInside = true;
-    syncTimer();
-  });
-  carousel.addEventListener("pointerleave", () => {
-    pointerInside = false;
-    syncTimer();
-  });
-  carousel.addEventListener("focusin", () => {
-    focusedInside = true;
-    syncTimer();
-  });
-  carousel.addEventListener("focusout", () => {
-    window.setTimeout(() => {
-      focusedInside = carousel.contains(document.activeElement);
-      if (!focusedInside) syncTimer();
-    }, 0);
-  });
-  document.addEventListener("visibilitychange", syncTimer);
-  reducedMotion.addEventListener("change", () => {
-    updateControls();
-    syncTimer();
   });
 
   initialSlide.querySelector("img").addEventListener("error", () => {
@@ -409,13 +331,11 @@ const createProjectCarousel = (carousel) => {
     markUnavailable(0, new Error(`Unable to load ${slideData[0].src}`));
   }
 
-  controls.hidden = false;
-  updateControls();
   if (!reducedMotion.matches) {
-    const nextIndex = nextAvailableIndex(currentIndex, 1);
+    const nextIndex = nextAvailableIndex(currentIndex);
     if (nextIndex !== -1) preloadSlide(nextIndex).catch((error) => markUnavailable(nextIndex, error));
   }
-  syncTimer();
+  scheduleNextSlide();
 };
 
 document.querySelectorAll("[data-carousel]").forEach(createProjectCarousel);
