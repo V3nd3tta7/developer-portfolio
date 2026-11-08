@@ -34,8 +34,9 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--sand); outline-
 .header-inner { min-height: 82px; display: flex; align-items: center; justify-content: space-between; }
 main { position: relative; z-index: 1; }
 .wordmark { display: inline-flex; gap: 12px; align-items: center; }
-.wordmark-mark { display: grid; width: 42px; height: 42px; place-items: center; border: 1px solid var(--sand); background: var(--surface-raised); color: var(--paper); font: 700 20px/1 var(--font-body); }
-.wordmark-label { color: var(--sand); font: 600 16px/1.25 var(--font-body); }
+.wordmark-mark { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border: 1px solid var(--brick); background: var(--surface-raised); color: var(--sand); font: 400 17px/1 var(--font-heading); letter-spacing: -.04em; }
+.wordmark-label { display: flex; flex-direction: column; color: var(--sand); font: 700 16px/1.15 var(--font-body); text-transform: uppercase; }
+.wordmark-title { margin-top: 3px; color: var(--secondary); font-size: 13px; font-weight: 500; letter-spacing: .08em; }
 .primary-nav { display: flex; align-items: center; gap: clamp(20px, 2.7vw, 40px); }
 .primary-nav a, .footer-nav a { color: var(--secondary); font: 600 20px/1.4 var(--font-body); transition: color .2s ease; }
 .primary-nav a:hover, .footer-nav a:hover, .footer-github:hover { color: var(--brick-hover); }
@@ -194,7 +195,7 @@ h1, h2, h3, p { margin-top: 0; }
 .site-footer { position: relative; padding: 44px 0 19px; border-top: 1px solid rgba(98, 69, 57, .72); background: rgba(24, 17, 14, .58); color: var(--paper); }
 .footer-main { display: grid; grid-template-columns: 1fr auto auto; align-items: start; gap: 70px; padding-bottom: 38px; }
 .footer-brand { display: flex; gap: 15px; align-items: center; }
-.footer-wordmark { color: var(--paper); font: 700 28px/1 var(--font-body); }
+.footer-wordmark { color: var(--paper); font: 400 28px/1 var(--font-heading); }
 .footer-wordmark span { color: var(--sand); }
 .footer-brand p { margin: 0; color: var(--secondary); font-size: 19px; line-height: 1.5; }
 .footer-nav { display: flex; flex-wrap: wrap; gap: 18px; padding-top: 13px; }

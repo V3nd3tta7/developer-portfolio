@@ -1,7 +1,7 @@
 // Update these values before publishing to personalize the portfolio.
-const PROFESSIONAL_NAME = "";
-const BRAND_NAME = "Independent Web Developer";
-const BRAND_MARK = "V.";
+const PROFESSIONAL_NAME = "Serhiy Boldetskiy";
+const BRAND_NAME = "Serhiy Boldetskiy";
+const BRAND_MARK = "SB.";
 const CONTACT_EMAIL = "serhiy.boldetskiy.it@gmail.com";
 const CONTACT_TELEGRAM = "https://t.me/serhiy_boldetskiy";
 const CONTACT_WHATSAPP = "380937687795";
@@ -52,7 +52,7 @@ document.querySelectorAll("[data-brand-name]").forEach((element) => {
 document.querySelectorAll("[data-brand-mark]").forEach((element) => {
   element.textContent = BRAND_MARK;
 });
-document.title = `${displayName} — Modern websites, thoughtfully built.`;
+document.title = `${displayName} | Web Developer`;
 const openGraphTitle = document.querySelector('meta[property="og:title"]');
 if (openGraphTitle) openGraphTitle.setAttribute("content", document.title);
 
