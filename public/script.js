@@ -52,9 +52,11 @@ document.querySelectorAll("[data-brand-name]").forEach((element) => {
 document.querySelectorAll("[data-brand-mark]").forEach((element) => {
   element.textContent = BRAND_MARK;
 });
-document.title = `${displayName} | Web Developer`;
-const openGraphTitle = document.querySelector('meta[property="og:title"]');
-if (openGraphTitle) openGraphTitle.setAttribute("content", document.title);
+if (!document.body.hasAttribute("data-case-study")) {
+  document.title = `${displayName} | Web Developer`;
+  const openGraphTitle = document.querySelector('meta[property="og:title"]');
+  if (openGraphTitle) openGraphTitle.setAttribute("content", document.title);
+}
 
 const terminal = document.querySelector("[data-terminal]");
 const terminalLines = terminal?.querySelector("[data-terminal-lines]");
