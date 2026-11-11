@@ -1,7 +1,5 @@
-// Update these values before publishing to personalize the portfolio.
-const PROFESSIONAL_NAME = "Serhiy Boldetskiy";
-const BRAND_NAME = "Serhiy Boldetskiy";
-const BRAND_MARK = "SB.";
+const BRAND_NAME = "ASTER STUDIO";
+const BRAND_MARK = "AS";
 const CONTACT_EMAIL = "serhiy.boldetskiy.it@gmail.com";
 const CONTACT_TELEGRAM = "https://t.me/serhiy_boldetskiy";
 const CONTACT_WHATSAPP = "380937687795";
@@ -45,15 +43,14 @@ if (siteVideo instanceof HTMLVideoElement) {
   reducedMotion.addEventListener("change", updateSiteVideo);
 }
 
-const displayName = PROFESSIONAL_NAME.trim() || BRAND_NAME;
-document.querySelectorAll("[data-brand-name]").forEach((element) => {
-  element.textContent = displayName;
-});
-document.querySelectorAll("[data-brand-mark]").forEach((element) => {
-  element.textContent = BRAND_MARK;
-});
 if (!document.body.hasAttribute("data-case-study")) {
-  document.title = `${displayName} | Web Developer`;
+  document.querySelectorAll("[data-brand-name]").forEach((element) => {
+    element.textContent = BRAND_NAME;
+  });
+  document.querySelectorAll("[data-brand-mark]").forEach((element) => {
+    element.textContent = BRAND_MARK;
+  });
+  document.title = `${BRAND_NAME} | Creative Web Studio`;
   const openGraphTitle = document.querySelector('meta[property="og:title"]');
   if (openGraphTitle) openGraphTitle.setAttribute("content", document.title);
 }
@@ -62,8 +59,8 @@ const terminal = document.querySelector("[data-terminal]");
 const terminalLines = terminal?.querySelector("[data-terminal-lines]");
 if (terminal && terminalLines) {
   const terminalContent = [
-    { type: "command", text: "> whoami" },
-    { type: "response", text: "> Independent Web Developer" },
+    { type: "command", text: "> studio" },
+    { type: "response", text: "> Independent Creative Web Studio" },
     { type: "command", text: "> mission" },
     { type: "response", text: "> Turning ideas into modern websites." },
     { type: "command", text: "> services --list" },
@@ -72,8 +69,8 @@ if (terminal && terminalLines) {
     { type: "service", text: "> Website Redesign" },
     { type: "command", text: "> tech_stack" },
     { type: "response", text: "> HTML · CSS · JavaScript · AI" },
-    { type: "command", text: "> portfolio --status" },
-    { type: "response", text: "> 2 Live Concept Projects ✓" },
+    { type: "command", text: "> approach" },
+    { type: "response", text: "> Design · Frontend · AI-assisted workflows" },
     { type: "command", text: "> availability" },
     { type: "availability", text: "> Open for new projects" },
   ];
