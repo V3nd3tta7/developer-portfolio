@@ -140,6 +140,7 @@ h1, h2, h3, p { margin-top: 0; }
 .section-heading-light h2 { color: var(--paper); }
 .service-list { border-top: 1px solid var(--border); }
 .service-item { min-height: 145px; display: grid; grid-template-columns: 70px 1fr 30px; align-items: center; gap: 20px; border-bottom: 1px solid var(--border); transition: padding .25s ease; }
+.services-cta { margin-top: 32px; }
 .service-item:hover { padding-inline: 8px; }
 .service-number { align-self: start; padding-top: 39px; color: var(--sand); font: 500 17px var(--font-body); }
 .service-item h3 { margin: 0 0 8px; color: var(--paper); font: 400 clamp(28px, 2.8vw, 40px)/1.1 var(--font-heading); letter-spacing: 0; }
